@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>For You ❤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:oklch(.75 .21 10); --rose-deep:oklch(.6 .24 15);
+    --crimson:oklch(.55 .26 22); --violet:oklch(.5 .22 320);
+    --violet-deep:oklch(.35 .18 310); --gold:oklch(.85 .13 80);
+    --bg:oklch(.13 .04 320); --fg:oklch(.96 .02 340);
+    --muted:oklch(.74 .05 340); --border:oklch(.32 .08 325 / .5);
+    --grad-night: radial-gradient(ellipse at 20% 0%, oklch(.28 .18 330/.55), transparent 60%),
+                  radial-gradient(ellipse at 80% 100%, oklch(.4 .24 18/.45), transparent 55%),
+                  radial-gradient(ellipse at 50% 50%, oklch(.22 .14 305/.4), transparent 70%),
+                  linear-gradient(180deg, oklch(.1 .04 310), oklch(.13 .06 325) 50%, oklch(.11 .05 320));
+    --grad-rose: linear-gradient(135deg, oklch(.62 .24 15), oklch(.5 .24 330));
+    --grad-text: linear-gradient(135deg, oklch(.92 .1 20), oklch(.78 .18 350) 50%, oklch(.7 .2 320));
+    --shadow-glow: 0 0 50px oklch(.62 .24 15/.5), 0 0 90px oklch(.5 .22 320/.35);
+    --shadow-deep: 0 30px 90px -30px oklch(.05 .05 310/.9);
+  }
+  *{box-sizing:border-box; border-color:var(--border)}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;letter-spacing:-.01em;margin:0}
+  p{margin:0}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  a{color:inherit;text-decoration:none}
+  .serif{font-family:'Cormorant Garamond',serif}
+  .italic{font-style:italic}
+  .gradient-text{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .bg-night{background:var(--grad-night);background-attachment:fixed;min-height:100vh;position:relative}
+  .bg-rose{background:var(--grad-rose)}
+  .glass{background:linear-gradient(135deg,oklch(1 0 0/.06),oklch(1 0 0/.02));backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border:1px solid oklch(1 0 0/.1)}
+  .glass-strong{background:linear-gradient(135deg,oklch(1 0 0/.1),oklch(1 0 0/.04));backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid oklch(1 0 0/.14)}
+  .shadow-glow{box-shadow:var(--shadow-glow)}
+  .shadow-deep{box-shadow:var(--shadow-deep)}
+  .stars::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:
+    radial-gradient(1px 1px at 20% 30%, oklch(1 0 0/.5), transparent 50%),
+    radial-gradient(1px 1px at 60% 70%, oklch(1 0 0/.4), transparent 50%),
+    radial-gradient(1.5px 1.5px at 80% 20%, oklch(.85 .13 80/.6), transparent 50%),
+    radial-gradient(1px 1px at 35% 80%, oklch(1 0 0/.4), transparent 50%),
+    radial-gradient(1px 1px at 90% 60%, oklch(1 0 0/.3), transparent 50%),
+    radial-gradient(1.5px 1.5px at 10% 50%, oklch(.85 .13 80/.5), transparent 50%)}
+  @keyframes float-up{0%{transform:translateY(105vh) translateX(0) rotate(0);opacity:0}10%{opacity:.9}90%{opacity:.9}100%{transform:translateY(-15vh) translateX(var(--drift,20px)) rotate(360deg);opacity:0}}
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px oklch(.62 .24 15/.4),0 0 40px oklch(.5 .22 320/.25)}50%{box-shadow:0 0 40px oklch(.62 .24 15/.7),0 0 80px oklch(.5 .22 320/.5)}}
+  @keyframes blink{0%,90%,100%{opacity:1}95%{opacity:0}}
+  @keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes zoom-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+  .floater{position:absolute;animation:float-up linear infinite;will-change:transform,opacity}
+  .pulse-glow{animation:pulse-glow 2.6s ease-in-out infinite}
+  .caret::after{content:'|';margin-left:4px;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent;animation:blink 1s steps(1) infinite}
+  .fade-in{animation:fade-in .4s ease both}
+  .zoom-in{animation:zoom-in .35s cubic-bezier(.2,.8,.2,1) both}
+  .flip{perspective:1400px;height:14rem}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .8s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+  .flip:hover .flip-inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:1rem;display:flex;align-items:center;justify-content:center;padding:1.5rem;text-align:center}
+  .face.back{transform:rotateY(180deg)}
+  /* Layout helpers */
+  .container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+  .center{text-align:center}
+  .btn{display:inline-block;padding:.85rem 1.75rem;border-radius:9999px;font-weight:500;letter-spacing:.02em;transition:transform .3s, box-shadow .3s; will-change:transform}
+  .btn:hover{transform:scale(1.05)}
+  .btn.primary{background:var(--grad-rose);color:#fff;box-shadow:var(--shadow-glow)}
+  .btn.ghost{color:var(--fg)}
+  .grid{display:grid;gap:1.5rem}
+  @media(min-width:640px){.grid.cols-2{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:768px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+  /* Pages */
+  .page{display:none;min-height:100vh;position:relative;z-index:1}
+  .page.active{display:block;animation:fade-in .5s ease both}
+  /* Music + menu */
+  .floating-ctrl{position:fixed;top:1rem;z-index:50;width:3rem;height:3rem;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:transform .25s}
+  .floating-ctrl:hover{transform:scale(1.1)}
+  .menu-overlay{position:fixed;inset:0;z-index:40;background:oklch(.1 .04 310/.95);backdrop-filter:blur(20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;opacity:0;pointer-events:none;transition:opacity .4s}
+  .menu-overlay.open{opacity:1;pointer-events:auto}
+  .menu-overlay a{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2rem, 6vw, 4rem);color:oklch(.96 .02 340/.8);transition:color .3s}
+  .menu-overlay a:hover, .menu-overlay a.active{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  /* Login */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f9fafb;padding:1rem;font-family:'Inter',sans-serif;color:#111827}
+  .login-card{width:100%;max-width:22rem;background:#fff;border:1px solid #e5e7eb;border-radius:.5rem;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .login-card h1{font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;margin-bottom:.25rem;color:#111827}
+  .login-card .sub{font-size:.875rem;color:#6b7280;margin-bottom:1.5rem}
+  .login-card label{display:block;font-size:.75rem;font-weight:500;color:#374151;margin-bottom:.25rem}
+  .login-card input{width:100%;padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.375rem;font-size:.875rem;font-family:inherit;margin-bottom:1rem;outline:none;color:#111827;background:#fff}
+  .login-card input:focus{border-color:#9ca3af;box-shadow:0 0 0 2px rgba(156,163,175,.4)}
+  .login-card button[type=submit]{width:100%;background:#111827;color:#fff;font-size:.875rem;font-weight:500;padding:.5rem;border-radius:.375rem;cursor:pointer;transition:background .2s}
+  .login-card button[type=submit]:hover{background:#1f2937}
+  .login-card .forgot{text-align:center;font-size:.75rem;color:#9ca3af;margin-top:1rem}
+  /* Polaroid */
+  .polaroid{background:oklch(.18 .05 325);border:1px solid oklch(.32 .08 325/.6);padding:.75rem .75rem 2.5rem;border-radius:.375rem;box-shadow:var(--shadow-deep);transition:all .5s;cursor:pointer;display:block;width:100%}
+  .polaroid img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+  .polaroid p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.25rem;text-align:center;margin-top:.75rem;color:oklch(.96 .02 340/.9)}
+  .polaroid:hover{transform:scale(1.04) rotate(0deg)!important;box-shadow:var(--shadow-glow)}
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:1.5rem;animation:fade-in .3s ease both}
+  .lightbox .inner{max-width:32rem;width:100%;padding:1rem 1rem 2.5rem;border-radius:1rem;animation:zoom-in .35s both}
+  .lightbox img{width:100%;border-radius:.375rem}
+  /* Modal (love message) */
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:1.5rem;animation:fade-in .3s ease both}
+  .modal .inner{max-width:28rem;width:100%;border-radius:1.5rem;padding:2rem;text-align:center;animation:zoom-in .35s both}
+  /* Timeline */
+  .timeline{position:relative;max-width:60rem;margin:0 auto;padding:0 1rem}
+  .timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(to bottom, transparent, var(--rose-deep), transparent);opacity:.4}
+  @media(max-width:767px){.timeline::before{display:none}}
+  .tl-item{display:flex;flex-direction:column;align-items:center;gap:2rem;margin-bottom:4rem;opacity:0;transform:translateY(2rem);transition:opacity 1s, transform 1s}
+  .tl-item.visible{opacity:1;transform:none}
+  @media(min-width:768px){
+    .tl-item{flex-direction:row}
+    .tl-item.right{flex-direction:row-reverse}
+    .tl-item .tl-card-wrap{width:50%;display:flex;justify-content:flex-end}
+    .tl-item.right .tl-card-wrap{justify-content:flex-start}
+    .tl-item .tl-text{width:50%;text-align:left;padding:0 1rem}
+    .tl-item.right .tl-text{text-align:right}
+  }
+  .tl-card{padding:.75rem .75rem 2rem;border-radius:.375rem;box-shadow:var(--shadow-deep)}
+  .tl-card .icon{width:13rem;height:13rem;border-radius:.25rem;display:flex;align-items:center;justify-content:center;font-size:4.5rem;background:var(--grad-rose);box-shadow:var(--shadow-glow)}
+  .tl-card .icon span{filter:drop-shadow(0 0 12px rgba(255,255,255,.6))}
+  .tl-card .title{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.25rem;text-align:center;margin-top:.75rem;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tl-text .date{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tl-text h3{font-size:1.5rem;margin-top:.25rem;font-weight:600}
+  .tl-text p{margin-top:.75rem;color:var(--muted);line-height:1.7;font-weight:300}
+  /* Reasons cards */
+  .reason-front{background:linear-gradient(135deg,oklch(1 0 0/.1),oklch(1 0 0/.04));border:1px solid oklch(1 0 0/.14)}
+  .reason-front h3{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.875rem;background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .reason-back{background:var(--grad-rose);box-shadow:var(--shadow-glow);color:#fff}
+  /* Letter */
+  .letter{position:relative;overflow:hidden;border-radius:1.5rem;max-width:42rem;margin:0 auto;padding:2rem}
+  @media(min-width:768px){.letter{padding:3rem}}
+  .letter::before,.letter::after{content:'';position:absolute;border-radius:9999px;filter:blur(60px);opacity:.2;pointer-events:none}
+  .letter::before{top:-4rem;right:-4rem;width:16rem;height:16rem;background:var(--grad-rose)}
+  .letter::after{bottom:-5rem;left:-5rem;width:18rem;height:18rem;background:linear-gradient(135deg, var(--crimson), var(--violet))}
+  .letter p.fade-p{opacity:0;transform:translateY(1rem);transition:opacity 1s, transform 1s}
+  .letter p.fade-p.visible{opacity:1;transform:none}
+  /* Finale */
+  .finale-card{margin:3.5rem auto 0;padding:2rem 2.5rem;border-radius:1.5rem;display:inline-block}
+  .small-cap{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:oklch(.96 .02 340/.5);margin-bottom:1rem}
+  .footer{position:relative;z-index:1;padding:2rem 0;text-align:center;font-size:.75rem;color:oklch(.96 .02 340/.4);letter-spacing:.2em;text-transform:uppercase;font-weight:300}
+  /* Smooth global scroll */
+  html{scroll-behavior:smooth}
+  *{scroll-behavior:smooth}
+  body{scroll-behavior:smooth}
+  /* Page transitions */
+  @keyframes page-in{from{opacity:0;transform:translateY(24px) scale(.985);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+  .page.active{animation:page-in .9s cubic-bezier(.2,.8,.2,1) both}
+  /* Scroll reveal */
+  .reveal{opacity:0;transform:translateY(36px);transition:opacity 1s cubic-bezier(.2,.8,.2,1), transform 1s cubic-bezier(.2,.8,.2,1)}
+  .reveal.visible{opacity:1;transform:none}
+  .reveal.delay-1{transition-delay:.1s}
+  .reveal.delay-2{transition-delay:.2s}
+  .reveal.delay-3{transition-delay:.3s}
+  /* Parallax for floaters wrapper */
+  #float{transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+  /* Smooth section padding so reveals have room */
+  .page section, .page > div{scroll-margin-top:5rem}
+  /* Cursor trail */
+  @media(hover:none){.trail{display:none}}
+</style>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const SUPABASE_URL = "https://mnveeustwfbffvgxcqat.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1udmVldXN0d2ZiZmZ2Z3hjcWF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NTYwNTUsImV4cCI6MjA5MjUzMjA1NX0.AJYHpgAexS_Y0-TrGA9w8twY_vMG-Z-lGeor55twOX0";
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.__loadFromSupabase = async function(){
+  try {
+    const { data, error } = await sb.from("For_You").select("key,value");
+    if (error) { console.warn("[Supabase] load failed:", error.message); return false; }
+    if (!data || !data.length) { console.warn("[Supabase] no rows in For_You"); return false; }
+    const merged = {};
+    for (const row of data) {
+      let v = row.value;
+      if (typeof v === "string") {
+        try { v = JSON.parse(v); } catch {}
+      }
+      merged[row.key] = v;
+    }
+    if (typeof window.DATA !== "undefined") {
+      Object.assign(window.DATA, merged);
+    }
+    console.log("[Supabase] loaded keys:", Object.keys(merged));
+    return true;
+  } catch (e) {
+    console.warn("[Supabase] error:", e);
+    return false;
+  }
+};
+</script>
+</head>
+<body>
+
+<!-- Login (initial view) -->
+<div id="login" class="login-wrap">
+  <div class="login-card">
+    <h1>Sign in</h1>
+    <p class="sub">Enter your details to continue</p>
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" required placeholder="you@example.com" autocomplete="email" />
+      <label>Password</label>
+      <input type="password" required placeholder="••••••••" autocomplete="current-password" />
+      <button type="submit">Sign in</button>
+      <p class="forgot">Forgot password?</p>
+    </form>
+  </div>
+</div>
+
+<!-- Surprise blast -->
+<div id="blast" style="display:none;position:fixed;inset:0;z-index:100;background:var(--grad-night);background-attachment:fixed" class="stars">
+  <div style="position:relative;z-index:10;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center">
+    <div class="serif italic gradient-text" style="font-size:clamp(3rem,10vw,7rem)">for you ❤</div>
+    <div class="serif" style="font-size:clamp(1.25rem,3vw,2rem);margin-top:.75rem;color:oklch(.96 .02 340/.8)">step inside…</div>
+  </div>
+  <div id="blastFloat" style="position:absolute;inset:0;overflow:hidden;pointer-events:none"></div>
+</div>
+
+<!-- Main app -->
+<div id="app" class="bg-night stars" style="display:none">
+  <button id="menuBtn" class="floating-ctrl glass-strong" style="left:1rem" aria-label="Menu">
+    <span style="display:flex;flex-direction:column;gap:.2rem">
+      <span style="display:block;width:1.1rem;height:1px;background:var(--fg)"></span>
+      <span style="display:block;width:1.1rem;height:1px;background:var(--fg)"></span>
+      <span style="display:block;width:1.1rem;height:1px;background:var(--fg)"></span>
+    </span>
+  </button>
+  <button id="musicBtn" class="floating-ctrl glass-strong shadow-glow pulse-glow" style="right:1rem" aria-label="Music">
+    <span id="musicIcon" style="color:var(--muted)">♫</span>
+  </button>
+
+  <nav id="menu" class="menu-overlay stars">
+    <a data-go="welcome">Welcome</a>
+    <a data-go="story">Our Story</a>
+    <a data-go="gallery">Gallery</a>
+    <a data-go="messages">For You</a>
+    <a data-go="letter">Letter</a>
+    <a data-go="finale">Forever</a>
+  </nav>
+
+  <div id="float" style="position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0"></div>
+
+  <main style="position:relative;z-index:1">
+    <!-- Welcome -->
+    <section class="page" data-page="welcome">
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:5rem 1.5rem;text-align:center">
+        <div style="max-width:48rem">
+          <p class="serif italic reveal" style="font-size:clamp(1.25rem,3vw,1.875rem);color:oklch(.96 .02 340/.7);margin-bottom:1.5rem">Hey <span class="herName"></span>…</p>
+          <h1 class="serif reveal delay-1" style="font-size:clamp(3rem,9vw,6rem);line-height:1.05">
+            <span class="gradient-text"><span id="typing"></span><span class="caret"></span></span>
+          </h1>
+          <p class="reveal delay-2" style="margin-top:2.5rem;font-size:1.125rem;color:oklch(.96 .02 340/.75);font-weight:300;line-height:1.7;max-width:38rem;margin-left:auto;margin-right:auto" data-key="welcomeMessage"></p>
+          <div class="reveal delay-3" style="margin-top:3rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:center">
+            <button class="btn primary pulse-glow" data-go="story">Enter My World →</button>
+            <button class="btn ghost glass-strong" data-go="finale">Skip to the end ❤</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Story -->
+    <section class="page" data-page="story">
+      <div class="container center" style="padding-top:7rem;padding-bottom:3rem;max-width:48rem">
+        <p class="small-cap reveal">Chapter One</p>
+        <h1 class="serif gradient-text reveal delay-1" style="font-size:clamp(2.5rem,7vw,4.5rem)">Our Love Story</h1>
+        <p class="serif italic reveal delay-2" style="margin-top:1.5rem;color:oklch(.96 .02 340/.7);font-size:1.125rem;line-height:1.7">Every story has a beginning. Ours just happens to be my favorite one ever told.</p>
+      </div>
+      <div id="timeline" class="timeline" style="padding:3rem 0"></div>
+      <div style="padding:5rem 1.5rem">
+        <h2 class="serif gradient-text center reveal" style="font-size:clamp(2rem,6vw,3.75rem);margin-bottom:1rem">Why I Love You</h2>
+        <p class="center serif italic reveal delay-1" style="color:oklch(.96 .02 340/.6);margin-bottom:3rem">hover each card — there's more on the back</p>
+        <div id="reasons" class="container grid cols-2 cols-3" style="max-width:60rem"></div>
+      </div>
+      <div class="center reveal" style="padding:4rem 0"><button class="btn primary" data-go="gallery">See our memories →</button></div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="page" data-page="gallery">
+      <div class="container center" style="padding-top:7rem;padding-bottom:3rem;max-width:48rem">
+        <p class="small-cap reveal">Chapter Two</p>
+        <h1 class="serif gradient-text reveal delay-1" style="font-size:clamp(2.5rem,7vw,4.5rem)">Our Gallery</h1>
+        <p class="serif italic reveal delay-2" style="margin-top:1.5rem;color:oklch(.96 .02 340/.7);font-size:1.125rem;line-height:1.7">Frozen pieces of forever. Click any one — let it grow, let it breathe.</p>
+      </div>
+      <div id="gallery" class="container grid cols-2 cols-3" style="padding:3rem 1.5rem;gap:2rem"></div>
+      <div class="center reveal" style="padding:4rem 0"><button class="btn primary" data-go="messages">Messages, just for you →</button></div>
+    </section>
+
+    <!-- Messages -->
+    <section class="page" data-page="messages">
+      <div class="container center" style="padding-top:7rem;padding-bottom:3rem;max-width:48rem">
+        <p class="small-cap reveal">Chapter Three</p>
+        <h1 class="serif gradient-text reveal delay-1" style="font-size:clamp(2.5rem,7vw,4.5rem)">Open When…</h1>
+        <p class="serif italic reveal delay-2" style="margin-top:1.5rem;color:oklch(.96 .02 340/.7);font-size:1.125rem;line-height:1.7">Press one when you need it. I tucked something inside each.</p>
+      </div>
+      <div id="msgBtns" style="padding:4rem 1rem;display:flex;flex-wrap:wrap;justify-content:center;gap:1rem;max-width:48rem;margin:0 auto"></div>
+      <div class="center reveal" style="padding:4rem 0"><button class="btn primary" data-go="letter">Read my letter to you →</button></div>
+    </section>
+
+    <!-- Letter -->
+    <section class="page" data-page="letter">
+      <div class="container center" style="padding-top:7rem;padding-bottom:3rem;max-width:48rem">
+        <p class="small-cap reveal">Chapter Four</p>
+        <h1 class="serif gradient-text reveal delay-1" style="font-size:clamp(2.5rem,7vw,4.5rem)">A Letter</h1>
+        <p class="serif italic reveal delay-2" style="margin-top:1rem;color:oklch(.96 .02 340/.6);font-size:1.25rem">to <span class="herName"></span></p>
+      </div>
+      <div style="padding:2.5rem 1.5rem">
+        <article id="letter" class="glass-strong letter shadow-deep">
+          <div id="letterBody" style="position:relative;display:flex;flex-direction:column;gap:1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.25rem;line-height:1.7;color:oklch(.96 .02 340/.9)"></div>
+          <div style="position:relative;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:right">
+            <p class="serif italic" style="color:oklch(.96 .02 340/.7)" data-key="letterSignoff"></p>
+            <p class="serif italic gradient-text" style="font-size:1.5rem;margin-top:.25rem" data-key="yourName"></p>
+          </div>
+        </article>
+      </div>
+      <div class="center reveal" style="padding:4rem 0"><button class="btn primary pulse-glow" data-go="finale">One more thing… →</button></div>
+    </section>
+
+    <!-- Finale -->
+    <section class="page" data-page="finale">
+      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:6rem 1.5rem;position:relative;overflow:hidden">
+        <div id="finaleHearts" style="position:absolute;inset:0;overflow:hidden;pointer-events:none"></div>
+        <div class="center" style="max-width:48rem;position:relative;z-index:10">
+          <p class="small-cap reveal">The End. Or maybe — the beginning.</p>
+          <h1 class="serif italic gradient-text reveal delay-1" style="font-size:clamp(2.5rem,9vw,6rem);line-height:1.05;text-shadow:0 0 40px oklch(.6 .24 15/.6)" data-key="finaleHeadline"></h1>
+          <p class="reveal delay-2" style="margin-top:2rem;font-size:1.125rem;color:oklch(.96 .02 340/.8);font-weight:300;line-height:1.7;max-width:42rem;margin-left:auto;margin-right:auto" data-key="finaleSub"></p>
+          <div class="finale-card glass-strong shadow-glow pulse-glow reveal delay-3">
+            <p class="serif italic gradient-text" style="font-size:clamp(1.75rem,5vw,2.5rem)" data-key="finaleQuestion"></p>
+            <div id="answerArea" style="margin-top:2rem;display:flex;align-items:center;justify-content:center;gap:1.5rem;height:3.5rem;position:relative">
+              <button id="yesBtn" class="btn primary">Yes ❤</button>
+              <button id="noBtn" class="btn glass" style="color:oklch(.96 .02 340/.7);transition:transform .3s">No</button>
+            </div>
+          </div>
+          <p class="serif italic" style="margin-top:4rem;color:oklch(.96 .02 340/.6);font-size:1.125rem">— <span data-key="yourName"></span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="footer">made with ❤ for you</div>
+</div>
+
+<audio id="bgm" loop preload="auto" src=""></audio>
+
+<script>
+let DATA = window.DATA = {"herName": "My Love", "yourName": "Yours, always", "heroLines": ["Hey Love\u2026", "this is just for you \u2764\ufe0f", "every word, every pixel \u2014 yours"], "welcomeMessage": "I built a whole little world tonight, just so I could tell you everything I feel. Take your time. Wander. Every page is a piece of my heart.", "messageButtons": [{"label": "Click when you're happy", "title": "Stay there. Right there.", "icon": "\u2728", "message": "When you're happy, you light up rooms you don't even know you're in. Promise me you'll let yourself feel this fully \u2014 laugh too loud, dance in the kitchen, take the long way home. The world is softer because you're glowing in it. And I'm somewhere in that glow, smiling because of you."}, {"label": "Click when you miss me", "title": "I'm closer than you think.", "icon": "\ud83c\udf19", "message": "If you miss me, look up. Same moon. Same sky. I'm probably thinking about you too \u2014 about your laugh, your hands, the way you say my name when you're half-asleep. Distance is just a word people invented before they met someone like you. I'm with you. Always. In every quiet second."}, {"label": "Click when you're sad", "title": "Hey. Breathe.", "icon": "\ud83e\udd0d", "message": "Whatever it is, it's allowed to be hard. You don't have to be strong right now. You don't have to explain. Put your hand on your chest and feel that heartbeat \u2014 that's the same heart I love every single day, on the bright days and the heavy ones. I love you when you're soft. I love you when you're broken. I love you. Period."}, {"label": "Click when you can't sleep", "title": "Come here.", "icon": "\ud83d\udca4", "message": "Close your eyes. Imagine my arm around you, my chin on the top of your head, the slow rhythm of breathing in sync. You are safe. You are mine. The night is not as big as it feels. Sleep, my love \u2014 I'll keep watch in your dreams."}], "reasons": [{"title": "Your laugh", "back": "It's the sound my soul recognized before my ears did. Home, in audio form."}, {"title": "Your kindness", "back": "You make strangers feel seen. You make me feel safe. There's no greater magic."}, {"title": "Your eyes", "back": "I find new colors in them every time. I think I'm still falling in."}, {"title": "Your hugs", "back": "Eight seconds. That's all it takes for the world to go quiet. You're my off-switch."}, {"title": "Your mind", "back": "The way you think about things rewires me. You make me kinder, braver, slower in the best ways."}, {"title": "All of you", "back": "The bright parts. The tired parts. The 3 a.m. parts. Every version. All of it. Always."}], "timeline": [{"date": "The day we met", "title": "First Hello", "caption": "I didn't know yet that the rest of my life was about to start. But something in me already did."}, {"date": "Our first date", "title": "Butterflies", "caption": "I tried to play it cool. I failed beautifully. You laughed and I was done for."}, {"date": "First 'I love you'", "title": "Three Little Words", "caption": "I'd been carrying them for weeks. They came out shaking. You smiled. The world re-tuned."}, {"date": "Our first trip", "title": "Anywhere With You", "caption": "Same view, but it looked different through your eyes. Everywhere does."}, {"date": "Today", "title": "Still Choosing You", "caption": "Every day, somehow more than the last. This isn't a feeling anymore \u2014 it's the shape of my life."}], "letterParagraphs": ["There are a thousand small things I never get to say out loud, so I'm putting them here.", "I love the way you exist. The way you stir your coffee, the way you go quiet when you're thinking, the way you laugh at your own jokes a half-second before anyone else. I love the unguarded version of you \u2014 the one who shows up at midnight in old clothes with tired eyes \u2014 more than any version the world gets to see.", "You make ordinary days holy. A grocery run becomes an adventure. A bad week becomes survivable. A song on the radio becomes ours forever. I didn't know a person could change the texture of life until you walked into mine.", "I want to be the one who makes you tea when you're sick, who remembers what your mom said that hurt your feelings in 2022, who holds your hand at every appointment, who fights for you, who lets you fight your own fights and just stands behind you so you know you're not alone.", "I want all the boring stuff \u2014 taxes, dishes, what's-for-dinner, who-forgot-to-buy-milk. I want the hard stuff too. I want to grow old enough to forget your name and still somehow know I love you.", "You are the best decision my heart ever made without asking permission. Thank you for being the reason I believe in soft, certain, lasting things."], "letterSignoff": "Forever and a little after that,", "finaleHeadline": "I'm the luckiest to have you.", "finaleSub": "Out of every timeline, every choice, every chance \u2014 somehow this one had you in it. I will spend the rest of my days trying to be worthy of that miracle.", "finaleQuestion": "Will you stay forever? \ud83e\udd0d", "galleryPhotos": [{"src": "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=900&q=80", "caption": "My favorite memory \u2764\ufe0f"}, {"src": "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=900&q=80", "caption": "The way you looked at me \u2615"}, {"src": "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=900&q=80", "caption": "Anywhere, with you \u2728"}, {"src": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=900&q=80", "caption": "Lazy Sundays, our religion \ud83e\udd0d"}, {"src": "https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=900&q=80", "caption": "That smile. Always that smile."}, {"src": "https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?w=900&q=80", "caption": "Forever felt right \u2764\ufe0f"}]};
+const HUE_ROSE = "oklch(.7 .24 15)";
+const HUE_VIOLET = "oklch(.6 .22 320)";
+const PAGES = ["welcome","story","gallery","messages","letter","finale"];
+let currentPage = "welcome";
+let initialized = false;
+
+// === Login flow ===
+document.getElementById("loginForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  document.getElementById("login").style.display = "none";
+  const blast = document.getElementById("blast");
+  blast.style.display = "block";
+  spawnBlast();
+  // Try to start music early (user gesture)
+  const audio = document.getElementById("bgm");
+  audio.volume = 0.45;
+  audio.play().then(() => setMusicIcon(true)).catch(() => setMusicIcon(false));
+  setTimeout(() => {
+    blast.style.display = "none";
+    document.getElementById("app").style.display = "block";
+    (async () => {
+      if (window.__loadFromSupabase) { await window.__loadFromSupabase(); }
+      init();
+      showPage("welcome");
+    })();
+  }, 2800);
+});
+
+function spawnBlast(){
+  const wrap = document.getElementById("blastFloat");
+  wrap.innerHTML = "";
+  const chars = ["❤","♥","✦","✧","🤍","💖"];
+  for (let i = 0; i < 110; i++){
+    const s = document.createElement("span");
+    s.textContent = chars[i % chars.length];
+    const hue = Math.random() > .5 ? HUE_ROSE : HUE_VIOLET;
+    const size = 14 + Math.random()*26;
+    const drift = (Math.random()-.5)*260;
+    const dur = 1.6 + Math.random()*1.6;
+    const delay = Math.random()*.5;
+    s.className = "floater";
+    s.style.cssText = `left:${Math.random()*100}%;bottom:0;font-size:${size}px;color:${hue};text-shadow:0 0 16px ${hue};animation-duration:${dur}s;animation-delay:${delay}s;animation-iteration-count:1;--drift:${drift}px`;
+    wrap.appendChild(s);
+  }
+}
+
+// === Init main app ===
+function init(){
+  if (initialized) return; initialized = true;
+  // Replace data placeholders
+  document.querySelectorAll("[data-key]").forEach(el => {
+    const k = el.getAttribute("data-key");
+    if (DATA[k]) el.textContent = DATA[k];
+  });
+  document.querySelectorAll(".herName").forEach(el => el.textContent = DATA.herName);
+
+  buildFloaters();
+  buildTimeline();
+  buildReasons();
+  buildGallery();
+  buildMessages();
+  buildLetter();
+  buildFinale();
+  startTyping();
+  // mark dynamically built items as reveal
+  document.querySelectorAll('#gallery .polaroid, #reasons .flip, #msgBtns .btn').forEach((el,i)=>{el.classList.add('reveal'); if(i%3===1)el.classList.add('delay-1'); if(i%3===2)el.classList.add('delay-2');});
+  armReveals(document);
+
+  // Nav
+  document.getElementById("menuBtn").addEventListener("click", toggleMenu);
+  document.querySelectorAll("[data-go]").forEach(el => {
+    el.addEventListener("click", () => { showPage(el.getAttribute("data-go")); closeMenu(); });
+  });
+
+  // Music
+  document.getElementById("musicBtn").addEventListener("click", toggleMusic);
+
+  // Cursor trail
+  if (!matchMedia("(pointer: coarse)").matches) initCursor();
+}
+
+function smoothScrollTo(target, duration){
+  const start = window.scrollY;
+  const delta = target - start;
+  if (Math.abs(delta) < 2) return;
+  const t0 = performance.now();
+  const ease = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; // easeInOutCubic
+  function step(now){
+    const k = Math.min(1, (now - t0) / duration);
+    window.scrollTo(0, start + delta * ease(k));
+    if (k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function showPage(name){
+  if (!PAGES.includes(name)) return;
+  currentPage = name;
+  // Smooth fade-out current, then swap
+  const cur = document.querySelector(".page.active");
+  const next = document.querySelector(`.page[data-page="${name}"]`);
+  document.querySelectorAll(".menu-overlay a").forEach(a => a.classList.toggle("active", a.dataset.go === name));
+  smoothScrollTo(0, 700);
+  const swap = () => {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    if (next) next.classList.add("active");
+    // re-arm reveals on the new page
+    armReveals(next);
+    if (name === "story") observeTimeline();
+    if (name === "letter") observeLetter();
+  };
+  if (cur && cur !== next){
+    cur.style.transition = "opacity .35s ease, transform .35s ease, filter .35s ease";
+    cur.style.opacity = "0";
+    cur.style.transform = "translateY(-12px)";
+    cur.style.filter = "blur(4px)";
+    setTimeout(() => {
+      cur.style.cssText = "";
+      swap();
+    }, 320);
+  } else {
+    swap();
+  }
+}
+function armReveals(root){
+  if (!root) return;
+  const els = root.querySelectorAll(".reveal");
+  els.forEach(el => el.classList.remove("visible"));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting){ e.target.classList.add("visible"); obs.unobserve(e.target); }
+    });
+  }, {threshold:.15, rootMargin:"0px 0px -8% 0px"});
+  els.forEach(el => obs.observe(el));
+}
+
+function toggleMenu(){ document.getElementById("menu").classList.toggle("open"); }
+function closeMenu(){ document.getElementById("menu").classList.remove("open"); }
+
+function setMusicIcon(playing){
+  const icon = document.getElementById("musicIcon");
+  const btn = document.getElementById("musicBtn");
+  icon.textContent = playing ? "♪" : "♫";
+  icon.style.color = playing ? "var(--rose)" : "var(--muted)";
+  btn.classList.toggle("pulse-glow", !playing);
+}
+function toggleMusic(){
+  const a = document.getElementById("bgm");
+  if (a.paused) a.play().then(() => setMusicIcon(true)).catch(()=>{});
+  else { a.pause(); setMusicIcon(false); }
+}
+
+// Floaters
+function buildFloaters(){
+  const wrap = document.getElementById("float");
+  const chars = ["❤","♥","💖","🤍","✦","✧","·"];
+  for (let i = 0; i < 22; i++){
+    const s = document.createElement("span");
+    s.textContent = chars[i % chars.length];
+    const hue = Math.random() > .5 ? HUE_ROSE : HUE_VIOLET;
+    const size = 10 + Math.random()*22;
+    const drift = (Math.random()-.5)*140;
+    const dur = 14 + Math.random()*18;
+    const delay = Math.random()*-25;
+    s.className = "floater";
+    s.style.cssText = `left:${Math.random()*100}%;font-size:${size}px;color:${hue};opacity:${.4+Math.random()*.5};text-shadow:0 0 12px ${hue};animation-duration:${dur}s;animation-delay:${delay}s;--drift:${drift}px`;
+    wrap.appendChild(s);
+  }
+}
+
+// Typing
+function startTyping(){
+  const target = document.getElementById("typing");
+  const lines = DATA.heroLines;
+  let li = 0, text = "", deleting = false;
+  function tick(){
+    const cur = lines[li];
+    if (!deleting && text === cur){ setTimeout(()=>{deleting=true;tick();}, 1400); return; }
+    if (deleting && text === ""){ deleting=false; li=(li+1)%lines.length; tick(); return; }
+    text = deleting ? text.slice(0,-1) : cur.slice(0, text.length+1);
+    target.textContent = text;
+    setTimeout(tick, deleting ? 35 : 70);
+  }
+  tick();
+}
+
+// Timeline
+function buildTimeline(){
+  const wrap = document.getElementById("timeline");
+  const icons = ["❤","✦","♥","✧","🤍"];
+  DATA.timeline.forEach((e, i) => {
+    const left = i % 2 === 0;
+    const item = document.createElement("div");
+    item.className = "tl-item" + (left ? "" : " right");
+    item.innerHTML = `
+      <div class="tl-card-wrap">
+        <div class="tl-card glass-strong" style="transform:rotate(${left?-3:3}deg)">
+          <div class="icon"><span>${icons[i%icons.length]}</span></div>
+          <p class="title">${escapeHtml(e.title)}</p>
+        </div>
+      </div>
+      <div class="tl-text">
+        <p class="date">${escapeHtml(e.date)}</p>
+        <h3 class="serif">${escapeHtml(e.title)}</h3>
+        <p>${escapeHtml(e.caption)}</p>
+      </div>`;
+    wrap.appendChild(item);
+  });
+}
+function observeTimeline(){
+  document.querySelectorAll(".tl-item").forEach(el => {
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting){ el.classList.add("visible"); obs.disconnect(); }
+    }, {threshold:.2});
+    obs.observe(el);
+  });
+}
+
+// Reasons
+function buildReasons(){
+  const wrap = document.getElementById("reasons");
+  DATA.reasons.forEach(r => {
+    const c = document.createElement("div");
+    c.className = "flip";
+    c.innerHTML = `
+      <div class="flip-inner">
+        <div class="face reason-front"><h3>${escapeHtml(r.title)}</h3></div>
+        <div class="face back reason-back"><p style="line-height:1.6;font-weight:300">${escapeHtml(r.back)}</p></div>
+      </div>`;
+    wrap.appendChild(c);
+  });
+}
+
+// Gallery
+function buildGallery(){
+  const wrap = document.getElementById("gallery");
+  const rotations = [-5,4,-3,6,-4,3];
+  DATA.galleryPhotos.forEach((p, i) => {
+    const b = document.createElement("button");
+    b.className = "polaroid";
+    b.style.transform = `rotate(${rotations[i%rotations.length]}deg)`;
+    b.innerHTML = `<img src="${p.src}" alt="" loading="lazy"><p>${escapeHtml(p.caption)}</p>`;
+    b.addEventListener("click", () => openLightbox(p));
+    wrap.appendChild(b);
+  });
+}
+function openLightbox(p){
+  const lb = document.createElement("div");
+  lb.className = "lightbox";
+  lb.innerHTML = `<div class="inner glass-strong shadow-glow"><img src="${p.src}" alt=""><p class="serif italic gradient-text" style="font-size:1.5rem;margin-top:1rem;text-align:center">${escapeHtml(p.caption)}</p></div>`;
+  lb.addEventListener("click", () => lb.remove());
+  document.body.appendChild(lb);
+}
+
+// Messages
+function buildMessages(){
+  const wrap = document.getElementById("msgBtns");
+  DATA.messageButtons.forEach(b => {
+    const btn = document.createElement("button");
+    btn.className = "btn glass-strong";
+    btn.style.padding = "1rem 1.5rem";
+    btn.innerHTML = `<span style="margin-right:.5rem;font-size:1.125rem">${b.icon}</span>${escapeHtml(b.label)}`;
+    btn.addEventListener("click", () => openMessage(b));
+    wrap.appendChild(btn);
+  });
+}
+function openMessage(b){
+  const m = document.createElement("div");
+  m.className = "modal";
+  m.innerHTML = `<div class="inner glass-strong shadow-glow">
+    <div style="font-size:3rem;margin-bottom:1rem">${b.icon}</div>
+    <h3 class="serif italic gradient-text" style="font-size:2.25rem;margin-bottom:1rem">${escapeHtml(b.title)}</h3>
+    <p style="font-size:1.05rem;line-height:1.7;color:oklch(.96 .02 340/.85);font-weight:300">${escapeHtml(b.message)}</p>
+    <button class="btn primary" style="margin-top:1.75rem">with all my heart</button>
+  </div>`;
+  m.addEventListener("click", e => { if (e.target === m || e.target.tagName === "BUTTON") m.remove(); });
+  document.body.appendChild(m);
+}
+
+// Letter
+function buildLetter(){
+  const wrap = document.getElementById("letterBody");
+  DATA.letterParagraphs.forEach(p => {
+    const el = document.createElement("p");
+    el.className = "fade-p";
+    el.textContent = p;
+    wrap.appendChild(el);
+  });
+}
+function observeLetter(){
+  const ps = document.querySelectorAll("#letterBody .fade-p");
+  ps.forEach((p, i) => setTimeout(() => p.classList.add("visible"), 600 + i*1400));
+}
+
+// Finale
+function buildFinale(){
+  const wrap = document.getElementById("finaleHearts");
+  for (let i = 0; i < 16; i++){
+    const s = document.createElement("span");
+    s.textContent = "❤";
+    const hue = i%2 ? HUE_ROSE : HUE_VIOLET;
+    const size = 28 + Math.random()*40;
+    const drift = (Math.random()-.5)*200;
+    const dur = 16 + Math.random()*12;
+    const delay = Math.random()*6;
+    s.className = "floater";
+    s.style.cssText = `left:${Math.random()*100}%;font-size:${size}px;color:${hue};text-shadow:0 0 24px ${hue};opacity:.7;animation-duration:${dur}s;animation-delay:${delay}s;--drift:${drift}px;bottom:0`;
+    wrap.appendChild(s);
+  }
+  let yesScale = 1;
+  const yes = document.getElementById("yesBtn");
+  const no = document.getElementById("noBtn");
+  const area = document.getElementById("answerArea");
+  function dodge(){
+    const x = (Math.random()-.5)*240;
+    const y = (Math.random()-.5)*120;
+    no.style.transform = `translate(${x}px, ${y}px)`;
+    yesScale = Math.min(1.6, yesScale + .08);
+    yes.style.transform = `scale(${yesScale})`;
+  }
+  no.addEventListener("mouseenter", dodge);
+  no.addEventListener("focus", dodge);
+  no.addEventListener("click", dodge);
+  yes.addEventListener("click", () => {
+    area.innerHTML = `<p class="serif italic gradient-text zoom-in" style="font-size:clamp(1.5rem,4vw,2rem)">I knew it. Forever it is. ❤</p>`;
+  });
+}
+
+// Cursor trail
+function initCursor(){
+  let last = 0;
+  addEventListener("mousemove", e => {
+    const now = performance.now();
+    if (now - last < 35) return; last = now;
+    const span = document.createElement("span");
+    const heart = Math.random() > .5;
+    span.textContent = heart ? "❤" : "✦";
+    const color = heart ? HUE_ROSE : HUE_VIOLET;
+    span.style.cssText = `position:fixed;left:${e.clientX}px;top:${e.clientY}px;pointer-events:none;z-index:9998;font-size:${10+Math.random()*8}px;color:${color};text-shadow:0 0 10px ${color};transform:translate(-50%,-50%);transition:opacity .9s, transform .9s`;
+    document.body.appendChild(span);
+    requestAnimationFrame(() => {
+      span.style.opacity = "0";
+      span.style.transform = "translate(-50%,-50%) translateY(-34px) scale(.4)";
+    });
+    setTimeout(() => span.remove(), 950);
+  });
+}
+
+addEventListener("scroll", () => {
+  const y = window.scrollY;
+  const f = document.getElementById("float");
+  if (f) f.style.transform = `translate3d(0, ${y * -0.15}px, 0)`;
+}, {passive:true});
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+</script>
+</body>
+</html>
